@@ -7,9 +7,9 @@ import 'package:flutter_application_1/models/ItemImage.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<ImageSource>> fetchImages(http.Client client) async {
+Future<List<ImageSource>> fetchImages(http.Client client, int page) async {
   final response = await client.get(Uri.parse(
-      'https://api.unsplash.com/photos/?client_id=ab3411e4ac868c2646c0ed488dfd919ef612b04c264f3374c97fff98ed253dc9'));
+      'https://api.unsplash.com/photos?page=${page}&client_id=ab3411e4ac868c2646c0ed488dfd919ef612b04c264f3374c97fff98ed253dc9'));
 
   return compute(parseImage, response.body);
 }
@@ -27,21 +27,15 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => HomePageWidgetState();
 }
 
+int page = 1;
+
 class HomePageWidgetState extends State<HomePage> {
   late Future<List<ImageSource>> imageSourse;
-
-  Future<void> _refreshImage() async {
-    print("refreshed");
-
-    setState(() {
-      imageSourse = fetchImages(http.Client());
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // fetchImageSource();
-    imageSourse = fetchImages(http.Client());
+
+    imageSourse = fetchImages(http.Client(), page);
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: AppBar(
@@ -52,7 +46,13 @@ class HomePageWidgetState extends State<HomePage> {
         leading: IconButton(
           color: Colors.black87,
           onPressed: () {
-            _refreshImage();
+            setState(() {
+              // _changeImage();
+              page = page + 1;
+              print(page);
+              imageCache?.clear();
+              imageSourse = fetchImages(http.Client(), page);
+            });
           },
           icon: Icon(Icons.refresh),
         ),
