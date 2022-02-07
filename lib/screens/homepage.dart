@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/components/ImageCard.dart';
 import 'package:flutter_application_1/models/ItemImage.dart';
+import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<ImageSource>> fetchImages(http.Client client) async {
@@ -27,33 +28,54 @@ class HomePage extends StatefulWidget {
 }
 
 class HomePageWidgetState extends State<HomePage> {
+  late Future<List<ImageSource>> imageSourse;
+
+  Future<void> _refreshImage() async {
+    print("refreshed");
+
+    setState(() {
+      imageSourse = fetchImages(http.Client());
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     // fetchImageSource();
+    imageSourse = fetchImages(http.Client());
     return Scaffold(
+      backgroundColor: Colors.grey[50],
       appBar: AppBar(
-        title: const Text("Home page"),
+        backgroundColor: Colors.grey[50],
+        title: const Text("Unsplash", style: TextStyle(color: Colors.black87)),
+        elevation: 0.0,
         titleSpacing: 0,
         leading: IconButton(
+          color: Colors.black87,
           onPressed: () {
-            print("You go to home");
+            _refreshImage();
           },
-          icon: const Icon(Icons.home),
+          icon: Icon(Icons.refresh),
         ),
       ),
       // ignore: unnecessary_new
       body: FutureBuilder<List<ImageSource>>(
-        future: fetchImages(http.Client()),
+        future: imageSourse,
         builder: (context, snapshot) {
           if (snapshot.hasError) {
             return const Center(
               child: Text('An error has occurred!'),
             );
           } else if (snapshot.hasData) {
-            return new ListView(
+            // ignore: unnecessary_new
+            return new MasonryGridView.count(
                 shrinkWrap: true,
-                padding: const EdgeInsets.all(20.0),
-                children: List.generate(snapshot.data!.length, (index) {
+                itemCount: snapshot.data!.length,
+
+                //padding: const EdgeInsets.all(20.0),
+                crossAxisCount: 2,
+                mainAxisSpacing: 8,
+                crossAxisSpacing: 8,
+                itemBuilder: (context, index) {
                   return Center(
                     child: ImageCard(
                       source: snapshot.data![index],
@@ -61,7 +83,7 @@ class HomePageWidgetState extends State<HomePage> {
                       selected: true,
                     ),
                   );
-                }));
+                });
           } else {
             return const Center(
               child: CircularProgressIndicator(),

@@ -35,11 +35,7 @@ class ImageCard extends StatelessWidget {
                                   source.imglink, source.author)));
                     },
                     splashColor: Colors.white10,
-                    child: Ink.image(
-                        width: MediaQuery.of(context).size.width,
-                        height: 200,
-                        image: NetworkImage(source.imglink),
-                        fit: BoxFit.cover))),
+                    child: Image.network(source.imglink))),
             // ignore: unnecessary_new
             new Container(
               padding: const EdgeInsets.all(10.0),

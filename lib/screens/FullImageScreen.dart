@@ -19,6 +19,7 @@ class _FullImagePageRouteState extends State<FullImagePageRoute> {
       backgroundColor: Colors.black,
       appBar: AppBar(
         title: Text("Author: " + widget.Author),
+        backgroundColor: Colors.black,
       ),
       body: Container(
           child: PhotoView(

@@ -9,9 +9,7 @@ class ImageSource {
 
   factory ImageSource.fromJson(Map<String, dynamic> json) {
     return ImageSource(
-        title: json['description'] != null
-            ? json['description']
-            : "Beautiful picture",
+        title: json['alt_description'] != null ? json['alt_description'] : "",
         author: json['user']['name'] as String,
         imglink: json['urls']['regular'] as String);
   }
